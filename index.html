@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      html, body, #map-canvas {
+        height: 100%;
+        margin: 0px;
+        padding: 0px
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8" src="phonegap.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&key=AIzaSyB0FM5TxM9gJEZkgIWNeXWVh8ApoicY6oo&sensor=false"> </script>
+    <script>
+    
+    var map;
+    var marker;
+    google.maps.event.addDomListener(window, 'load', initialize);
+    
+    document.addEventListener("deviceready", onDeviceReady, false);
+
+    function onDeviceReady() {
+	navigator.geolocation.getCurrentPosition(setupMap, onError);
+        // Throw an error if no update is received every 30 seconds
+    }
+
+
+    function initialize() {
+  	var mapOptions = {
+    		zoom: 8,
+	        center: new google.maps.LatLng(-34.397, 150.644)
+  	};
+        map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    }
+
+    function setupMap(position) {
+	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        map.setCenter(pos);
+
+        marker = new google.maps.Marker({
+            position: pos,
+            map: map,
+            title: "<div style = 'height:60px;width:200px'><b>Your location:</b><br />Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude + "</div"
+        });
+
+        google.maps.event.addListener(marker, "click", function (e) {
+            var infoWindow = new google.maps.InfoWindow();
+            infoWindow.setContent(marker.title);
+            infoWindow.open(map, marker);
+        });
+
+        var options = { timeout: 30000 };
+        watchID = navigator.geolocation.watchPosition(onSuccess, onError, options);
+    }
+
+
+    function onSuccess(position) {
+	var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+        //map.setCenter(pos);
+	marker.setPosition(pos);
+
+    }
+
+    function onError(error) {
+            alert('code: '    + error.code    + '\n' +
+                  'message: ' + error.message + '\n');
+    }
+
+
+
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"></div>
+  </body>
+</html>
+
